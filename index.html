@@ -4,8 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#2b3cff">
+<meta name="description" content="Tienes un documento pendiente de respuesta.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Expediente 0001 · Confidencial">
+<meta property="og:description" content="Tienes un documento pendiente de respuesta.">
 <style>html{-webkit-text-size-adjust:100%}body{margin:0}[hidden]{display:none!important}</style>
-<title>Expediente Ex Favorito</title>
+<title>Expediente 0001 · Confidencial</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Special+Elite&display=swap">
@@ -43,10 +47,21 @@ body {
 }
 
 .sheet {
+  position: relative;
+  isolation: isolate;
   width: 100%;
   max-width: 460px;
-  background: var(--paper);
   padding: 20px 20px 22px;
+}
+
+/* El papel se inclina en su propia capa. Un transform en .sheet haría que el botón "No"
+   (position: fixed) se midiera respecto al papel y no respecto a la pantalla. */
+.sheet::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--paper);
   border-radius: 4px;
   box-shadow: 8px 8px 0 var(--blue-deep);
   transform: rotate(-0.8deg);
