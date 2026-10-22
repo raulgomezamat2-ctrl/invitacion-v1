@@ -1,5 +1,11 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2b3cff">
+<style>html{-webkit-text-size-adjust:100%}body{margin:0}[hidden]{display:none!important}</style>
 <title>Expediente Ex Favorito</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Special+Elite&display=swap">
@@ -140,9 +146,13 @@ h1 {
 
 .btn-yes:active { box-shadow: 1px 1px 0 var(--ink); }
 
+.slot {
+  flex: 0 0 auto;
+  display: flex;
+}
+
 .btn-no {
   background: var(--paper);
-  flex: 0 0 auto;
   transform: scale(var(--shrink, 1));
 }
 
@@ -229,6 +239,8 @@ h1 {
   .btn-yes, .btn-no, .btn-no.is-loose { transition: none; }
 }
 </style>
+</head>
+<body>
 
 <main class="sheet">
   <div class="tag"><span>Expediente 0001</span><span>Confidencial</span></div>
@@ -248,7 +260,7 @@ h1 {
     <h2 class="ask-title">¿Aceptas?</h2>
     <div class="actions">
       <button type="button" class="btn btn-yes" id="yes">Sí, acepto</button>
-      <button type="button" class="btn btn-no" id="no">No</button>
+      <span class="slot" id="slot"><button type="button" class="btn btn-no" id="no">No</button></span>
     </div>
     <p class="msg" id="msg" aria-live="polite"></p>
     <p class="small">Letra pequeña: la respuesta correcta es la del botón amarillo. Esta solicitud no admite recurso.</p>
@@ -269,7 +281,7 @@ h1 {
   var TELEFONO = "34669822323";          // tu número con prefijo y sin signos (vacío = ella elige el contacto)
 
   var $ = function (s) { return document.querySelector(s); };
-  var yes = $("#yes"), no = $("#no"), msg = $("#msg"), ask = $("#ask"), done = $("#done"), wa = $("#wa");
+  var yes = $("#yes"), no = $("#no"), slot = $("#slot"), msg = $("#msg"), ask = $("#ask"), done = $("#done"), wa = $("#wa");
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   document.querySelectorAll("[data-nombre]").forEach(function (el) { el.textContent = NOMBRE; });
@@ -289,7 +301,7 @@ h1 {
     "Último aviso: pulsa el amarillo."
   ];
 
-  var attempts = 0, loose = false, surrendered = false, last = 0;
+  var attempts = 0, loose = false, surrendered = false, last = 0, yesArmed = false;
 
   function place(x, y) {
     no.style.left = x + "px";
@@ -316,6 +328,8 @@ h1 {
 
     if (!loose) {
       var r = no.getBoundingClientRect();
+      slot.style.width = r.width + "px";
+      slot.style.height = r.height + "px";
       no.classList.add("is-loose");
       place(r.left, r.top);
       no.getBoundingClientRect();
@@ -348,6 +362,8 @@ h1 {
   function surrender() {
     surrendered = true;
     no.classList.remove("is-loose");
+    slot.style.width = "";
+    slot.style.height = "";
     no.classList.add("is-yield");
     no.style.left = "";
     no.style.top = "";
@@ -368,6 +384,7 @@ h1 {
     if (e.pointerType === "mouse") dodge(e.clientX, e.clientY);
   });
   no.addEventListener("pointerdown", function (e) {
+    yesArmed = false;
     if (surrendered) return;
     e.preventDefault();
     dodge(e.clientX, e.clientY);
@@ -376,7 +393,13 @@ h1 {
     e.preventDefault();
     if (surrendered) accept(); else dodge(null, null);
   });
-  yes.addEventListener("click", accept);
+  yes.addEventListener("pointerdown", function () { yesArmed = true; });
+  yes.addEventListener("click", function (e) {
+    // Un clic suelto sobre "Sí" (el dedo venía del botón "No") no cuenta.
+    if (e.detail !== 0 && !yesArmed) return;
+    yesArmed = false;
+    accept();
+  });
   window.addEventListener("resize", clampLoose);
 
   function confetti() {
@@ -423,3 +446,6 @@ h1 {
   }
 })();
 </script>
+
+</body>
+</html>
