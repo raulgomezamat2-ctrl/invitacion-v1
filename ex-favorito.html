@@ -1,0 +1,425 @@
+<title>Expediente Ex Favorito</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Special+Elite&display=swap">
+<style>
+/* Concepto: formulario oficial de papel sobre fondo azul cobalto. El botón "No" se escapa por toda la pantalla. */
+:root {
+  --blue: #2b3cff;
+  --blue-deep: #1a24b8;
+  --paper: #f6f7fb;
+  --ink: #14162e;
+  --ink-soft: #4a4d6b;
+  --stamp: #d01f45;
+  --yellow: #ffd23f;
+  --line: #b9bcd4;
+  --font-display: "Anton", Impact, "Arial Narrow", sans-serif;
+  --font-body: "Special Elite", "Courier New", monospace;
+}
+
+* { box-sizing: border-box; }
+
+html { height: 100%; }
+
+body {
+  min-height: 100%;
+  background: var(--blue);
+  color: var(--ink);
+  font-family: var(--font-body);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-block: 28px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+.sheet {
+  width: 100%;
+  max-width: 460px;
+  background: var(--paper);
+  padding: 20px 20px 22px;
+  border-radius: 4px;
+  box-shadow: 8px 8px 0 var(--blue-deep);
+  transform: rotate(-0.8deg);
+}
+
+.tag {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--ink);
+}
+
+h1 {
+  margin: 18px 0 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(32px, 10vw, 46px);
+  line-height: 1.04;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.fields {
+  margin: 20px 0 0;
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 12px 12px;
+  align-items: baseline;
+}
+
+.fields dt {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.fields dd {
+  margin: 0;
+  padding-bottom: 4px;
+  border-bottom: 1px dashed var(--line);
+  font-size: 15px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.ask-title {
+  margin: 26px 0 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 28px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.actions {
+  margin-top: 14px;
+  min-height: 84px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+
+.btn {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 14px 22px;
+  border: 3px solid var(--ink);
+  border-radius: 2px;
+  color: var(--ink);
+  cursor: pointer;
+  touch-action: manipulation;
+  text-decoration: none;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.btn:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+
+.btn-yes {
+  background: var(--yellow);
+  box-shadow: 4px 4px 0 var(--ink);
+  flex: 1 1 150px;
+  transform: scale(var(--grow, 1));
+  transition: transform 0.25s ease, box-shadow 0.15s ease;
+}
+
+.btn-yes:active { box-shadow: 1px 1px 0 var(--ink); }
+
+.btn-no {
+  background: var(--paper);
+  flex: 0 0 auto;
+  transform: scale(var(--shrink, 1));
+}
+
+.btn-no.is-loose {
+  position: fixed;
+  z-index: 30;
+  margin: 0;
+  transition: left 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2), top 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2), transform 0.2s ease;
+}
+
+.btn-no.is-yield {
+  background: var(--yellow);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.msg {
+  margin: 12px 0 0;
+  min-height: 3.1em;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--stamp);
+}
+
+.small {
+  margin: 16px 0 0;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.done { margin-top: 24px; }
+.done:focus { outline: none; }
+
+.stamp {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 40px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stamp);
+  border: 5px solid var(--stamp);
+  padding: 4px 16px;
+  transform: rotate(-7deg);
+  animation: slam 0.55s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+@keyframes slam {
+  from { opacity: 0; transform: rotate(-24deg) scale(2.6); }
+  to { opacity: 1; transform: rotate(-7deg) scale(1); }
+}
+
+.done h2 {
+  margin: 22px 0 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 1.08;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.done p { margin: 12px 0 0; font-size: 15px; line-height: 1.5; }
+
+.wa {
+  display: block;
+  margin-top: 20px;
+  background: var(--yellow);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.confetti {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 50;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp { animation: none; }
+  .btn-yes, .btn-no, .btn-no.is-loose { transition: none; }
+}
+</style>
+
+<main class="sheet">
+  <div class="tag"><span>Expediente 0001</span><span>Confidencial</span></div>
+
+  <h1><span data-nombre>María Cayuelas</span></h1>
+
+  <dl class="fields">
+    <dt>Solicitante</dt><dd>Tu ex favorito</dd>
+    <dt>Destinataria</dt><dd data-nombre>Nombre</dd>
+    <dt>Asunto</dt><dd>Pasar la noche con tu ex favorito</dd>
+    <dt>Duración</dt><dd>Toda la noche</dd>
+    <dt>Fecha</dt><dd>Viernes 23</dd>
+    <dt>Lugar</dt><dd>Madrid</dd>
+  </dl>
+
+  <section id="ask">
+    <h2 class="ask-title">¿Aceptas?</h2>
+    <div class="actions">
+      <button type="button" class="btn btn-yes" id="yes">Sí, acepto</button>
+      <button type="button" class="btn btn-no" id="no">No</button>
+    </div>
+    <p class="msg" id="msg" aria-live="polite"></p>
+    <p class="small">Letra pequeña: la respuesta correcta es la del botón amarillo. Esta solicitud no admite recurso.</p>
+  </section>
+
+  <section class="done" id="done" tabindex="-1" hidden>
+    <div class="stamp">Concedido</div>
+    <h2>Solicitud aprobada, <span data-nombre>Nombre</span>.</h2>
+    <p>Queda registrado: una noche con tu ex favorito. Viernes 23, en Madrid. Ahora solo falta fijar la hora.</p>
+    <a class="btn wa" id="wa" href="https://wa.me/" target="_blank" rel="noopener">Confirmar por WhatsApp</a>
+  </section>
+</main>
+
+<script>
+(function () {
+  // Personaliza estas dos líneas antes de enviarla.
+  var NOMBRE = "María Cayuelas";      // su nombre
+  var TELEFONO = "34669822323";          // tu número con prefijo y sin signos (vacío = ella elige el contacto)
+
+  var $ = function (s) { return document.querySelector(s); };
+  var yes = $("#yes"), no = $("#no"), msg = $("#msg"), ask = $("#ask"), done = $("#done"), wa = $("#wa");
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  document.querySelectorAll("[data-nombre]").forEach(function (el) { el.textContent = NOMBRE; });
+
+  var texto = "Acepto la solicitud 0001: una noche con mi ex favorito el viernes 23 en Madrid. ¿A qué hora? 😏";
+  wa.href = "https://wa.me/" + TELEFONO + "?text=" + encodeURIComponent(texto);
+
+  var taunts = [
+    "Ups. Ese botón tiene vida propia.",
+    "Casi. Pero no.",
+    "El botón bueno es el amarillo.",
+    "Tu ex favorito se está empezando a ofender.",
+    "Ese botón lleva meses yendo al gimnasio.",
+    "Un intento más y aviso a seguridad.",
+    "Te estoy viendo insistir.",
+    "Quedan pocos intentos de dignidad.",
+    "Último aviso: pulsa el amarillo."
+  ];
+
+  var attempts = 0, loose = false, surrendered = false, last = 0;
+
+  function place(x, y) {
+    no.style.left = x + "px";
+    no.style.top = y + "px";
+  }
+
+  function clampLoose() {
+    if (!loose || surrendered) return;
+    var vw = document.documentElement.clientWidth, vh = window.innerHeight;
+    var b = no.getBoundingClientRect();
+    var x = Math.min(Math.max(16, b.left), Math.max(16, vw - b.width - 16));
+    var y = Math.min(Math.max(16, b.top), Math.max(16, vh - b.height - 16));
+    place(x, y);
+  }
+
+  function dodge(px, py) {
+    if (surrendered) return;
+    var now = Date.now();
+    if (now - last < 250) return;
+    last = now;
+
+    attempts++;
+    if (attempts >= 10) { surrender(); return; }
+
+    if (!loose) {
+      var r = no.getBoundingClientRect();
+      no.classList.add("is-loose");
+      place(r.left, r.top);
+      no.getBoundingClientRect();
+      loose = true;
+    }
+
+    var vw = document.documentElement.clientWidth, vh = window.innerHeight;
+    var b = no.getBoundingClientRect();
+    var bw = b.width, bh = b.height;
+    var y = yes.getBoundingClientRect();
+    var m = 16, best = null;
+
+    for (var i = 0; i < 40; i++) {
+      var x = m + Math.random() * Math.max(1, vw - bw - 2 * m);
+      var t = m + Math.random() * Math.max(1, vh - bh - 2 * m);
+      var cx = x + bw / 2, cy = t + bh / 2;
+      var onYes = x < y.right + 12 && x + bw > y.left - 12 && t < y.bottom + 12 && t + bh > y.top - 12;
+      var far = px == null || Math.hypot(cx - px, cy - py) > 150;
+      if (!onYes && far) { best = [x, t]; break; }
+      if (!best && !onYes) best = [x, t];
+    }
+    if (!best) best = [m, vh - bh - m];
+    place(best[0], best[1]);
+
+    yes.style.setProperty("--grow", Math.min(1.3, 1 + attempts * 0.035).toFixed(3));
+    no.style.setProperty("--shrink", Math.max(0.75, 1 - attempts * 0.03).toFixed(3));
+    msg.textContent = taunts[Math.min(attempts - 1, taunts.length - 1)];
+  }
+
+  function surrender() {
+    surrendered = true;
+    no.classList.remove("is-loose");
+    no.classList.add("is-yield");
+    no.style.left = "";
+    no.style.top = "";
+    no.style.removeProperty("--shrink");
+    no.textContent = "Vale, me rindo";
+    msg.textContent = "Está bien. Te dejo rendirte con dignidad.";
+  }
+
+  function accept() {
+    ask.hidden = true;
+    done.hidden = false;
+    done.focus({ preventScroll: true });
+    window.scrollTo(0, 0);
+    if (!reduce) confetti();
+  }
+
+  no.addEventListener("pointerenter", function (e) {
+    if (e.pointerType === "mouse") dodge(e.clientX, e.clientY);
+  });
+  no.addEventListener("pointerdown", function (e) {
+    if (surrendered) return;
+    e.preventDefault();
+    dodge(e.clientX, e.clientY);
+  });
+  no.addEventListener("click", function (e) {
+    e.preventDefault();
+    if (surrendered) accept(); else dodge(null, null);
+  });
+  yes.addEventListener("click", accept);
+  window.addEventListener("resize", clampLoose);
+
+  function confetti() {
+    var cv = document.createElement("canvas");
+    cv.className = "confetti";
+    document.body.appendChild(cv);
+    var ctx = cv.getContext("2d");
+    var dpr = window.devicePixelRatio || 1;
+    var W = window.innerWidth, H = window.innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.scale(dpr, dpr);
+
+    var colors = ["#ffd23f", "#d01f45", "#ffffff", "#14162e", "#8f98ff"];
+    var parts = [];
+    for (var i = 0; i < 150; i++) {
+      parts.push({
+        x: W / 2 + (Math.random() - 0.5) * 80,
+        y: H * 0.35,
+        vx: (Math.random() - 0.5) * 14,
+        vy: -Math.random() * 14 - 4,
+        w: 6 + Math.random() * 6,
+        h: 8 + Math.random() * 8,
+        r: Math.random() * Math.PI,
+        vr: (Math.random() - 0.5) * 0.4,
+        c: colors[i % colors.length]
+      });
+    }
+    var start = performance.now();
+    (function frame(now) {
+      var life = now - start;
+      ctx.clearRect(0, 0, W, H);
+      parts.forEach(function (p) {
+        p.vy += 0.3; p.vx *= 0.99;
+        p.x += p.vx; p.y += p.vy; p.r += p.vr;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.r);
+        ctx.fillStyle = p.c;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      });
+      if (life < 3200) requestAnimationFrame(frame); else cv.remove();
+    })(start);
+  }
+})();
+</script>
